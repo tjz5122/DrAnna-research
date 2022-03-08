@@ -140,4 +140,6 @@ max_N = 100
 N = 16
 c = 1
 
-print(process(N, max_N, c))
+f = open("newSSM10_TestAllNet", 'w')
+f.write(process(N, max_N, c))
+f.close()
