@@ -140,6 +140,6 @@ max_N = 100
 N = 16
 c = 1
 
-f = open("newSSM10_TestAllNet", 'w')
+f = open("option1HestonError", 'w')
 f.write(process(N, max_N, c))
 f.close()
