@@ -136,10 +136,13 @@ def process(base_N, max_N, c):
         
     
 #all parameters large than 0
-max_N = 100
+max_N = 200
 N = 16
 c = 1
 
+result = process(N, max_N, c)
 f = open("option1HestonError", 'w')
-f.write(process(N, max_N, c))
+f
+f.write("{}\n".format(result))
+
 f.close()
