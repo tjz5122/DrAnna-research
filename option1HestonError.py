@@ -146,6 +146,5 @@ count = 1;
 
 result = process(N, max_N, c, count)
 f = open("newSSM10_TestAllNet", 'w')
-f.write("{ }".format(result))
-
+f.write("{}\n".format(result))
 f.close()
