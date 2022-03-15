@@ -81,15 +81,15 @@ def solver(N, Nt, c):
 
 
 
-def RelativeErrorMatrix(result1, result2):
+def ErrorMatrix(result1, result2):
     #print(len(result1), len(result1[0]), len(result2), len(result2[0]))
     abserror = np.amax(abs(result2 - result1))
     relative_error = np.amax(abs(result2 - result1)/ abs(result1))
-    return relative_error
+    return abserror, relative_error
 
 
 
-def process(base_N, max_N, c):
+def process(base_N, max_N, c, count):
     '''
     Nx = 16   Nt = c*16**2, if not pass multiply constant c1
     Nx = 32   Nt = c*32**2, if not pass multiply constant c2 go back to 16 again where M = 16**2 * c2
@@ -101,33 +101,29 @@ def process(base_N, max_N, c):
     N = base_N
     error_list = []
     pre_result = solver(N, c*(N**2), c)
-    print(pre_result)
     if pre_result.any() != False:
         N *= 2
     else:
-        process(N, max_N, c*2)
+        count += 1
+        return process(N, max_N, c*2, count)
         
     while (N <= max_N):
 
         Nt = c*(N**2)
         new_result = solver(N, Nt, c)
         if new_result.any() != False:
-            #conditon 1:
             comparable_result = np.array([[new_result[i][j] for i in range(0,len(new_result),2)] for j in range(0,len(new_result[0]),2)])
-            #conditon 2:
-            #comparable_result = np.array([[new_result[i][j] for i in range(0,len(new_result),N/base_N)] for j in range(0,len(new_result[0]),N/base_N)])
+
+            abs_error = ErrorMatrix(comparable_result, pre_result)[0]
             
-            relative_error = RelativeErrorMatrix(comparable_result, pre_result)
+            error_list.append(abs_error)
             
-            error_list.append(relative_error)
-            
-            #conditon 1:
             pre_result = new_result
-            #conditon 2:
-            #pre_result = comparable_result
+
 
         else:
-            process(N, max_N, c*2)
+            count += 1
+            return process(N, max_N, c*2, count)
     
         #increase the N to next level
         N *= 2
@@ -135,14 +131,21 @@ def process(base_N, max_N, c):
     return error_list
         
     
+    
+
 #all parameters large than 0
-max_N = 200
+max_N = 150
 N = 16
 c = 1
+count = 1;
+#e1,e2,e3,e4 #abs
 
-result = process(N, max_N, c)
-f = open("option1HestonError", 'w')
-f
-f.write("{}\n".format(result))
+#log2(e2/e1)  close to 1
+#log2(e3/e2)    close to 1
+#log2(e4/e3)    close to 1
+
+result = process(N, max_N, c, count)
+f = open("newSSM10_TestAllNet", 'w')
+f.write("{ }".format(result))
 
 f.close()
