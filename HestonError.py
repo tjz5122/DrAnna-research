@@ -19,8 +19,8 @@ import matplotlib.pyplot as plt
 def Heston_solver(N, Nt, c):
     min_v = 0.2
     max_v = 2
-    min_price = 1 #since the uniform mesh, then dv = dx
-    max_price = 40
+    min_S = 1 #since the uniform mesh, then dv = dx
+    max_S = 40
     rho = 0.5
     theta = 1  #mean min vol and max vol
     kappa = 2  # the degree of mean reversion
@@ -31,25 +31,25 @@ def Heston_solver(N, Nt, c):
     T = 1
     L = 1
     
-    ds = (max_price - min_price)/N #1
+    ds = (max_S - min_S)/N #1
     dv = (max_v - min_v)/N #1
     dt = T/Nt
     
     u = np.zeros((Nt+1, N+1, N+1))
     
     #check if stability condition holds
-    if dt <= ((r*(ds*dv)**2 + max_v*(max_s*dv)**2 + max_v*(sigma*ds)**2) / (ds*dv)**2):  #stability condition
-    #dt*(r*(dv**2)*(ds**2) + max_v*(sigma**2)*(ds**2) + max_v*(max_price**2)*(dv**2)) <= (dv**2) * (ds**2):
+    if dt <= ((dv**2) * (ds**2))/(r*(dv**2)*(ds**2) + max_v*(sigma**2)*(ds**2) + max_v*(max_S**2)*(dv**2)):  #stability condition
+    #dt*(r*(dv**2)*(ds**2) + max_v*(sigma**2)*(ds**2) + max_v*(max_S**2)*(dv**2)) <= (dv**2) * (ds**2):
             
         #initial condition applied
         for i in range(0, N):
             for j in range(0, N):
-                u[0,i,j] = max((min_price+(i*ds)-K),0)  
+                u[0,i,j] = max((min_S+(i*ds)-K),0)  
                 
         #loop through the matrix to insert value
         for t in range(0, Nt):
             for i in range(0, N):
-                si = min_price + i*ds
+                si = min_S + i*ds
                 u[t+1,i,N] = si
                 
                 if i != N:
