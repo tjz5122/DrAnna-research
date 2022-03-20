@@ -38,7 +38,7 @@ def Heston_solver(N, Nt, c):
     u = np.zeros((Nt+1, N+1, N+1))
     
     #check if stability condition holds
-    if dt <= ((dv**2) * (ds**2))/(r*(dv**2)*(ds**2) + max_v*(sigma**2)*(ds**2) + max_v*(max_price**2)*(dv**2)):  #stability condition
+    if dt <= ((r*(ds*dv)**2 + max_v*(max_s*dv)**2 + max_v*(sigma*ds)**2) / (ds*dv)**2):  #stability condition
     #dt*(r*(dv**2)*(ds**2) + max_v*(sigma**2)*(ds**2) + max_v*(max_price**2)*(dv**2)) <= (dv**2) * (ds**2):
             
         #initial condition applied
