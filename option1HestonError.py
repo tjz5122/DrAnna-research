@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 
 
-def heston_solver(N, Nt, c):
+def Heston_solver(N, Nt, c):
     min_v = 0.2
     max_v = 2
     min_price = 1 #since the uniform mesh, then dv = dx
@@ -104,7 +104,7 @@ def ErrorCalculation(base_N, max_N, c, count):
     final_c = c
     final_count = count
     final_N = base_N
-    pre_result = heston_solver(N, c*(N**2), c)
+    pre_result = Heston_solver(N, c*(N**2), c)
     if pre_result.any() != False:
         N *= 2
     else:
@@ -114,7 +114,7 @@ def ErrorCalculation(base_N, max_N, c, count):
     while (N <= max_N):
 
         Nt = c*(N**2)
-        new_result = heston_solver(N, Nt, c)
+        new_result = Heston_solver(N, Nt, c)
         if new_result.any() != False:
             comparable_result = np.array([[new_result[i][j] for i in range(0,len(new_result),2)] for j in range(0,len(new_result[0]),2)])
 
