@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 
 
-def solver(N, Nt, c):
+def heston_solver(N, Nt, c):
     min_v = 0.2
     max_v = 2
     min_price = 1 #since the uniform mesh, then dv = dx
@@ -82,7 +82,7 @@ def solver(N, Nt, c):
 
 
 
-def ErrorMatrix(result1, result2):
+def RelativeError(result1, result2):
     #print(len(result1), len(result1[0]), len(result2), len(result2[0]))
     abserror = np.amax(abs(result2 - result1))
     relative_error = np.amax(abs(result2 - result1)/ abs(result1))
@@ -90,7 +90,7 @@ def ErrorMatrix(result1, result2):
 
 
 
-def process(base_N, max_N, c, count):
+def ErrorCalculation(base_N, max_N, c, count):
     '''
     Nx = 16   Nt = c*16**2, if not pass multiply constant c1
     Nx = 32   Nt = c*32**2, if not pass multiply constant c2 go back to 16 again where M = 16**2 * c2
@@ -101,21 +101,24 @@ def process(base_N, max_N, c, count):
     '''
     N = base_N
     error_list = []
-    pre_result = solver(N, c*(N**2), c)
+    final_c = c
+    final_count = count
+    final_N = base_N
+    pre_result = heston_solver(N, c*(N**2), c)
     if pre_result.any() != False:
         N *= 2
     else:
         count += 1
-        return process(N, max_N, c*2, count)
+        return ErrorCalculation(N, max_N, c*2, count)
         
     while (N <= max_N):
 
         Nt = c*(N**2)
-        new_result = solver(N, Nt, c)
+        new_result = heston_solver(N, Nt, c)
         if new_result.any() != False:
             comparable_result = np.array([[new_result[i][j] for i in range(0,len(new_result),2)] for j in range(0,len(new_result[0]),2)])
 
-            abs_error = ErrorMatrix(comparable_result, pre_result)[0]
+            abs_error = RelativeError(comparable_result, pre_result)[0]
             
             error_list.append(abs_error)
             
@@ -124,12 +127,12 @@ def process(base_N, max_N, c, count):
 
         else:
             count += 1
-            return process(N, max_N, c*2, count)
+            return ErrorCalculation(N, max_N, c*2, count)
     
         #increase the N to next level
         N *= 2
     
-    return error_list
+    return error_list, final_c, final_count, final_N
         
     
     
@@ -145,7 +148,10 @@ count = 1;
 #log2(e3/e2)    close to 1
 #log2(e4/e3)    close to 1
 
-result = process(N, max_N, c, count)
-f = open("newSSM10_TestAllNet", 'w')
-f.write("{}\n".format(result))
+result = ErrorCalculation(N, max_N, c, count)
+f = open("heston_error", 'w')
+f.write("error_list = {}\n".format(result[0]))
+f.write("final_c = {}\n".format(result[1]))
+f.write("final_count = {}\n".format(result[2]))
+f.write("final_N = {}\n".format(result[3]))
 f.close()
