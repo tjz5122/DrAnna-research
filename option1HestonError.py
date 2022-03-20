@@ -74,7 +74,8 @@ def solver(N, Nt, c):
                        
                     if i == (N-1):
                         u[t+1,N,j] = ds + u[t+1,N-1,j]
-                        
+        u[-1,-1,-1] = u[-1,-1,-2]        
+      
         return u[-1]
     else:
         return np.zeros(1)
